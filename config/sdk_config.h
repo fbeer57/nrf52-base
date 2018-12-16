@@ -5717,8 +5717,29 @@
 // <e> APP_TIMER_ENABLED - app_timer - Application timer functionality
 //==========================================================
 #ifndef APP_TIMER_ENABLED
-#define APP_TIMER_ENABLED 1
+#define APP_TIMER_ENABLED 0
 #endif
+
+// <o> APP_TIMER_V2 - use v2 implementation of app_timer
+#ifndef APP_TIMER_V2
+#define APP_TIMER_V2 1
+#endif
+
+// <o> APP_TIMER_V2_RTC0_ENABLED - enable RTC0 for apptimer2
+#ifndef APP_TIMER_V2_RTC0_ENABLED
+#define APP_TIMER_V2_RTC0_ENABLED 1
+#endif
+
+// <o> APP_TIMER_V2_RTC1_ENABLED - enable RTC1 for apptimer2
+#ifndef APP_TIMER_V2_RTC1_ENABLED
+#define APP_TIMER_V2_RTC1_ENABLED 0
+#endif
+
+// <o> APP_TIMER_V2_RTC2_ENABLED - enable RTC2 for apptimer2
+#ifndef APP_TIMER_V2_RTC2_ENABLED
+#define APP_TIMER_V2_RTC2_ENABLED 0
+#endif
+
 // <o> APP_TIMER_CONFIG_RTC_FREQUENCY  - Configure RTC prescaler.
  
 // <0=> 32768 Hz 
@@ -6267,7 +6288,7 @@
  
 
 #ifndef HARDFAULT_HANDLER_ENABLED
-#define HARDFAULT_HANDLER_ENABLED 0
+#define HARDFAULT_HANDLER_ENABLED 1
 #endif
 
 // <e> HCI_MEM_POOL_ENABLED - hci_mem_pool - memory pool implementation used by HCI
