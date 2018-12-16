@@ -21,11 +21,11 @@ SRC_FILES += $(SDK_ROOT)/components/libraries/util/app_error_handler_gcc.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/util/app_error_weak.c
 #SRC_FILES += $(SDK_ROOT)/components/libraries/scheduler/app_scheduler.c
 #SRC_FILES += $(SDK_ROOT)/components/libraries/sdcard/app_sdcard.c
-#SRC_FILES += $(SDK_ROOT)/components/libraries/timer/app_timer.c
+#SRC_FILES += $(SDK_ROOT)/components/libraries/timer/experimental/app_timer2.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/util/app_util_platform.c
-#SRC_FILES += $(SDK_ROOT)/components/libraries/hardfault/hardfault_implementation.c
-#SRC_FILES += $(SDK_ROOT)/components/libraries/util/nrf_assert.c
-#SRC_FILES += $(SDK_ROOT)/components/libraries/atomic_fifo/nrf_atfifo.c
+SRC_FILES += $(SDK_ROOT)/components/libraries/hardfault/hardfault_implementation.c
+SRC_FILES += $(SDK_ROOT)/components/libraries/util/nrf_assert.c
+SRC_FILES += $(SDK_ROOT)/components/libraries/atomic_fifo/nrf_atfifo.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/atomic/nrf_atomic.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/balloc/nrf_balloc.c
 SRC_FILES += $(SDK_ROOT)/external/fprintf/nrf_fprintf.c
@@ -292,11 +292,10 @@ $(foreach target, $(TARGETS), $(call define_target, $(target)))
 
 .PHONY: flash flash_softdevice erase
 
-# Flash the program
 # Flash the softdevice
 #flash_softdevice:
-#	@echo Flashing: s132_nrf52_6.1.0_softdevice.hex
-#	openocd -d2 -f ~/mcu/nrf52/openocd_nrf52-cmsis.cfg -c 'init_reset halt; program $(SDK_ROOT)/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex verify; reset; exit'
+#	@echo Flashing: s132_nrf52_6.1.1_softdevice.hex
+#	openocd -d2 -f ~/mcu/nrf52/openocd_nrf52-cmsis.cfg -c 'init_reset halt; program $(SDK_ROOT)/components/softdevice/s132/hex/s132_nrf52_6.1.1_softdevice.hex verify; reset; exit'
 
 # Flash the program
 flash: $(OUTPUT_DIRECTORY)/nrf52832_xxaa.hex
