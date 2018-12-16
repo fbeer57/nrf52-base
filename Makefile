@@ -59,9 +59,9 @@ SRC_FILES += $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uarte.c
 #SRC_FILES += $(SDK_ROOT)/external/utf_converter/utf.c
 #SRC_FILES += $(SDK_ROOT)/external/fatfs/port/diskio_blkdev.c
 #SRC_FILES += $(SDK_ROOT)/external/fatfs/src/ff.c
-#SRC_FILES += $(SDK_ROOT)/components/softdevice/common/nrf_sdh.c
-#SRC_FILES += $(SDK_ROOT)/components/softdevice/common/nrf_sdh_ble.c
-#SRC_FILES += $(SDK_ROOT)/components/softdevice/common/nrf_sdh_soc.c
+SRC_FILES += $(SDK_ROOT)/components/softdevice/common/nrf_sdh.c
+SRC_FILES += $(SDK_ROOT)/components/softdevice/common/nrf_sdh_ble.c
+SRC_FILES += $(SDK_ROOT)/components/softdevice/common/nrf_sdh_soc.c
 SRC_FILES += $(wildcard $(PROJ_DIR)/src/*.c)
 
 # Include folders common to all targets
@@ -219,9 +219,9 @@ CFLAGS += -DFLOAT_ABI_HARD
 CFLAGS += -DNRF52
 CFLAGS += -DNRF52832_XXAA
 CFLAGS += -DNRF52_PAN_74
-#CFLAGS += -DNRF_SD_BLE_API_VERSION=6
-#CFLAGS += -DS132
-#CFLAGS += -DSOFTDEVICE_PRESENT
+CFLAGS += -DNRF_SD_BLE_API_VERSION=6
+CFLAGS += -DS132
+CFLAGS += -DSOFTDEVICE_PRESENT
 CFLAGS += -DSWI_DISABLE0
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs
@@ -245,9 +245,9 @@ ASMFLAGS += -DFLOAT_ABI_HARD
 ASMFLAGS += -DNRF52
 ASMFLAGS += -DNRF52832_XXAA
 ASMFLAGS += -DNRF52_PAN_74
-#ASMFLAGS += -DNRF_SD_BLE_API_VERSION=6
-#ASMFLAGS += -DS132
-#ASMFLAGS += -DSOFTDEVICE_PRESENT
+ASMFLAGS += -DNRF_SD_BLE_API_VERSION=6
+ASMFLAGS += -DS132
+ASMFLAGS += -DSOFTDEVICE_PRESENT
 ASMFLAGS += -DSWI_DISABLE0
 
 # Linker flags
@@ -279,9 +279,11 @@ default: nrf52832_xxaa
 help:
 	@echo following targets are available:
 	@echo		nrf52832_xxaa
-#	@echo		flash_softdevice
+	@echo		flash_softdevice
 	@echo		sdk_config - starting external tool for editing sdk_config.h
 	@echo		flash      - flashing binary
+	@echo		erase      - mass erase flash
+	@echo		reset      - soft reset target
 
 TEMPLATE_PATH := $(SDK_ROOT)/components/toolchain/gcc
 
@@ -292,11 +294,10 @@ $(foreach target, $(TARGETS), $(call define_target, $(target)))
 
 .PHONY: flash flash_softdevice erase
 
-# Flash the program
 # Flash the softdevice
-#flash_softdevice:
-#	@echo Flashing: s132_nrf52_6.1.0_softdevice.hex
-#	openocd -d2 -f ~/mcu/nrf52/openocd_nrf52-cmsis.cfg -c 'init_reset halt; program $(SDK_ROOT)/components/softdevice/s132/hex/s132_nrf52_6.1.0_softdevice.hex verify; reset; exit'
+flash_softdevice:
+	@echo Flashing: s132_nrf52_6.1.0_softdevice.hex
+	openocd -d2 -f ~/mcu/nrf52/openocd_nrf52-cmsis.cfg -c 'init_reset halt; program $(SDK_ROOT)/components/softdevice/s132/hex/s132_nrf52_6.1.1_softdevice.hex verify; reset; exit'
 
 # Flash the program
 flash: $(OUTPUT_DIRECTORY)/nrf52832_xxaa.hex

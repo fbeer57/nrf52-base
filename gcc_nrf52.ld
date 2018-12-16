@@ -5,8 +5,8 @@ GROUP(-lgcc -lc -lnosys)
 
 MEMORY
 {
-  FLASH (rx) : ORIGIN = 0x0, LENGTH = 0x80000
-  RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 0x10000
+  FLASH (rx) : ORIGIN = 0x26000, LENGTH = 0x5a000
+  RAM (rwx) :  ORIGIN = 0x200018a8, LENGTH = 0xe758
 }
 
 SECTIONS
@@ -37,12 +37,6 @@ SECTIONS
     KEEP(*(SORT(.log_filter_data*)))
     PROVIDE(__stop_log_filter_data = .);
   } > RAM
-  .cli_sorted_cmd_ptrs :
-  {
-    PROVIDE(__start_cli_sorted_cmd_ptrs = .);
-    KEEP(*(.cli_sorted_cmd_ptrs))
-    PROVIDE(__stop_cli_sorted_cmd_ptrs = .);
-  } > RAM
 
 } INSERT AFTER .data;
 
@@ -51,11 +45,17 @@ SECTIONS
   .mem_section_dummy_rom :
   {
   }
-    .nrf_queue :
+  .sdh_soc_observers :
   {
-    PROVIDE(__start_nrf_queue = .);
-    KEEP(*(.nrf_queue))
-    PROVIDE(__stop_nrf_queue = .);
+    PROVIDE(__start_sdh_soc_observers = .);
+    KEEP(*(SORT(.sdh_soc_observers*)))
+    PROVIDE(__stop_sdh_soc_observers = .);
+  } > FLASH
+  .sdh_ble_observers :
+  {
+    PROVIDE(__start_sdh_ble_observers = .);
+    KEEP(*(SORT(.sdh_ble_observers*)))
+    PROVIDE(__stop_sdh_ble_observers = .);
   } > FLASH
   .pwr_mgmt_data :
   {
@@ -63,11 +63,29 @@ SECTIONS
     KEEP(*(SORT(.pwr_mgmt_data*)))
     PROVIDE(__stop_pwr_mgmt_data = .);
   } > FLASH
-  .log_const_data :
+  .sdh_stack_observers :
   {
-    PROVIDE(__start_log_const_data = .);
-    KEEP(*(SORT(.log_const_data*)))
-    PROVIDE(__stop_log_const_data = .);
+    PROVIDE(__start_sdh_stack_observers = .);
+    KEEP(*(SORT(.sdh_stack_observers*)))
+    PROVIDE(__stop_sdh_stack_observers = .);
+  } > FLASH
+  .sdh_req_observers :
+  {
+    PROVIDE(__start_sdh_req_observers = .);
+    KEEP(*(SORT(.sdh_req_observers*)))
+    PROVIDE(__stop_sdh_req_observers = .);
+  } > FLASH
+  .sdh_state_observers :
+  {
+    PROVIDE(__start_sdh_state_observers = .);
+    KEEP(*(SORT(.sdh_state_observers*)))
+    PROVIDE(__stop_sdh_state_observers = .);
+  } > FLASH
+    .nrf_queue :
+  {
+    PROVIDE(__start_nrf_queue = .);
+    KEEP(*(.nrf_queue))
+    PROVIDE(__stop_nrf_queue = .);
   } > FLASH
     .nrf_balloc :
   {
@@ -75,17 +93,23 @@ SECTIONS
     KEEP(*(.nrf_balloc))
     PROVIDE(__stop_nrf_balloc = .);
   } > FLASH
+    .cli_command :
+  {
+    PROVIDE(__start_cli_command = .);
+    KEEP(*(.cli_command))
+    PROVIDE(__stop_cli_command = .);
+  } > FLASH
   .crypto_data :
   {
     PROVIDE(__start_crypto_data = .);
     KEEP(*(SORT(.crypto_data*)))
     PROVIDE(__stop_crypto_data = .);
   } > FLASH
-    .cli_command :
+  .log_const_data :
   {
-    PROVIDE(__start_cli_command = .);
-    KEEP(*(.cli_command))
-    PROVIDE(__stop_cli_command = .);
+    PROVIDE(__start_log_const_data = .);
+    KEEP(*(SORT(.log_const_data*)))
+    PROVIDE(__stop_log_const_data = .);
   } > FLASH
   .log_backends :
   {
