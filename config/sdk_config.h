@@ -3171,25 +3171,22 @@
 #ifndef NRFX_SPIM_ENABLED
 #define NRFX_SPIM_ENABLED 1
 #endif
-// <q> NRFX_SPIM0_ENABLED  - Enable SPIM0 instance
- 
 
+// <q> NRFX_SPIM0_ENABLED  - Enable SPIM0 instance
 #ifndef NRFX_SPIM0_ENABLED
 #define NRFX_SPIM0_ENABLED 1
 #endif
 
 // <q> NRFX_SPIM1_ENABLED  - Enable SPIM1 instance
- 
-
 #ifndef NRFX_SPIM1_ENABLED
-#define NRFX_SPIM1_ENABLED 1
+#define NRFX_SPIM1_ENABLED 0
 #endif
 
 // <q> NRFX_SPIM2_ENABLED  - Enable SPIM2 instance
  
 
 #ifndef NRFX_SPIM2_ENABLED
-#define NRFX_SPIM2_ENABLED 1
+#define NRFX_SPIM2_ENABLED 0
 #endif
 
 // <o> NRFX_SPIM_MISO_PULL_CFG  - MISO pin pull configuration.
@@ -6779,7 +6776,7 @@
 // <i> Selected pin will be set when CPU is in sleep mode.
 //==========================================================
 #ifndef NRF_PWR_MGMT_CONFIG_DEBUG_PIN_ENABLED
-#define NRF_PWR_MGMT_CONFIG_DEBUG_PIN_ENABLED 0
+#define NRF_PWR_MGMT_CONFIG_DEBUG_PIN_ENABLED 1
 #endif
 // <o> NRF_PWR_MGMT_SLEEP_DEBUG_PIN  - Pin number
  
@@ -6818,7 +6815,7 @@
 // <4294967295=> Not connected 
 
 #ifndef NRF_PWR_MGMT_SLEEP_DEBUG_PIN
-#define NRF_PWR_MGMT_SLEEP_DEBUG_PIN 31
+#define NRF_PWR_MGMT_SLEEP_DEBUG_PIN 24
 #endif
 
 // </e>
