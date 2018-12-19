@@ -82,7 +82,7 @@ void epaper_init(void)
         .ss_active_high = false,
         .irq_priority   = NRFX_SPIM_DEFAULT_CONFIG_IRQ_PRIORITY,
         .orc            = 0xFF,
-        .frequency      = NRF_SPIM_FREQ_125K,
+        .frequency      = NRF_SPIM_FREQ_4M,
         .mode           = NRF_SPIM_MODE_0,
         .bit_order      = NRF_SPIM_BIT_ORDER_MSB_FIRST
     };
