@@ -220,13 +220,13 @@ void epaper_sleep(void)
 
 void epaper_clear(void)
 {
-    int width = (EPD_WIDTH + 7) / 8;
+    const int width = (EPD_WIDTH + 7) / 8;
+    static uint8_t white = 0xff;
     send_command(DATA_START_TRANSMISSION_1);
     for(int row = 0; row < EPD_HEIGHT; ++row)
     {
         for(int col = 0; col < width; ++col)
         {
-            static uint8_t white = 0xff;
             send_data(&white, 1);
         }
     }
@@ -236,7 +236,6 @@ void epaper_clear(void)
     {
         for(int col = 0; col < width; ++col)
         {
-            static uint8_t white = 0xff;
             send_data(&white, 1);
         }
     }
@@ -246,7 +245,7 @@ void epaper_clear(void)
 
 void epaper_display(uint8_t* framebuffer) 
 {
-    int width = (EPD_WIDTH + 7) / 8;
+    const int width = (EPD_WIDTH + 7) / 8;
     send_command(DATA_START_TRANSMISSION_1);
     for(int row = 0; row < EPD_HEIGHT; ++row)
     {
