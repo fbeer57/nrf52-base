@@ -8,6 +8,9 @@
 #include "nrfx_spim.h"
 #include "nrfx_gpiote.h"
 
+#include "app_timer.h"
+#include "task_manager.h"
+
 // static uint8_t framebuffer[15000];
 
 static uint8_t lut_vcom0[] =
@@ -63,12 +66,22 @@ static uint8_t lut_bb[] ={
 
 static nrfx_spim_t spim_instance = NRFX_SPIM_INSTANCE(0);
 
-static bool epaper_is_busy = false;
-
 static void busy_event_handler(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 {
     if (pin == EPD_PIN_BUSY && action == GPIOTE_CONFIG_POLARITY_Toggle) {
-        epaper_is_busy = !nrfx_gpiote_in_is_set(EPD_PIN_BUSY);
+        if (nrfx_gpiote_in_is_set(EPD_PIN_BUSY))
+        {
+            task_events_set(display_task_id, EPAPER_IDLE);
+        }
+    }
+}
+
+static void spim_handler(nrfx_spim_evt_t const * p_event,
+                         void *                  p_context)
+{
+    if (p_event->type == NRFX_SPIM_EVENT_DONE)
+    {
+        task_events_set(display_task_id, SPIM_DONE);
     }
 }
 
@@ -82,13 +95,13 @@ void epaper_init(void)
         .ss_active_high = false,
         .irq_priority   = NRFX_SPIM_DEFAULT_CONFIG_IRQ_PRIORITY,
         .orc            = 0xFF,
-        .frequency      = NRF_SPIM_FREQ_4M,
+        .frequency      = NRF_SPIM_FREQ_1M,
         .mode           = NRF_SPIM_MODE_0,
         .bit_order      = NRF_SPIM_BIT_ORDER_MSB_FIRST
     };
 
     APP_ERROR_CHECK(
-        nrfx_spim_init(&spim_instance, &spim_config, NULL, NULL)
+        nrfx_spim_init(&spim_instance, &spim_config, spim_handler, NULL)
     );
 
     if (!nrfx_gpiote_is_init()) {
@@ -124,22 +137,17 @@ void epaper_init(void)
 
 static void epaper_wait(void) 
 {
-    NRF_LOG_INFO("wait for display");
-    while(epaper_is_busy) 
-    {
-        NRF_LOG_PROCESS();
-        nrf_delay_ms(100);
-    }
-    NRF_LOG_INFO("display is ready");
+    task_delay_ms(200);
+    task_events_wait(EPAPER_IDLE);
 }
 
 static void epaper_reset()
 {
-    nrf_delay_ms(200);
+    task_delay_ms(200);
     nrfx_gpiote_out_clear(EPD_PIN_RST);
-    nrf_delay_ms(200);
+    task_delay_ms(200);
     nrfx_gpiote_out_set(EPD_PIN_RST);
-    nrf_delay_ms(200);
+    task_delay_ms(200);
 }
 
 static void send_data(const uint8_t* bytes, uint8_t length)
@@ -152,6 +160,7 @@ static void send_data(const uint8_t* bytes, uint8_t length)
     };
     nrfx_gpiote_out_set(EPD_PIN_DC);
     APP_ERROR_CHECK(nrfx_spim_xfer(&spim_instance, &transfer, 0));
+    task_events_wait(SPIM_DONE);
     nrfx_gpiote_out_clear(EPD_PIN_DC);
 }
 
@@ -165,6 +174,7 @@ static void send_command(uint8_t cmd)
     };
     nrfx_gpiote_out_clear(EPD_PIN_DC);
     APP_ERROR_CHECK(nrfx_spim_xfer(&spim_instance, &transfer, 0));
+    task_events_wait(SPIM_DONE);
     nrfx_gpiote_out_set(EPD_PIN_DC);
 }
 
@@ -184,7 +194,6 @@ static void send_command(uint8_t cmd)
 static void epaper_refresh()
 {
     send_command(DISPLAY_REFRESH);
-    nrf_delay_ms(100);
     epaper_wait();
 }
 
@@ -195,7 +204,6 @@ void epaper_wakeup(void)
     SEND_COMMAND(POWER_SETTING, {0x03, 0x00, 0x2b, 0x2b});
     SEND_COMMAND(BOOSTER_SOFT_START, {0x17, 0x17, 0x17});
     send_command(POWER_ON);
-
     epaper_wait();
 
     SEND_COMMAND(PANEL_SETTING, {0xbf, 0x0d});

@@ -9,8 +9,93 @@
 #include "nrf_log_default_backends.h"
 #include "nrf_pwr_mgmt.h"
 
+#include "nrfx_clock.h"
+
+#include "app_timer.h"
+#include "task_manager.h"
+
 #include "epaper.h"
 static uint8_t gImage_4in2[];
+
+APP_TIMER_DEF(hello_timer);
+APP_TIMER_DEF(display_timer);
+APP_TIMER_DEF(display_delay_timer);
+
+#define HELLO_TIME 0x00000001
+
+task_id_t hello_task_id;
+task_id_t display_task_id;
+
+void ping(const char *msg)
+{
+    NRF_LOG_INFO(msg);
+    while(NRF_LOG_PROCESS())
+        ;
+}
+
+void task_delay_ms(int ms)
+{
+    APP_ERROR_CHECK(app_timer_start(display_delay_timer, APP_TIMER_TICKS(ms), NULL));
+    task_events_wait(DELAY_TIME);
+}
+
+static void hello_timeout(void * p_context) {
+    task_events_set(hello_task_id, HELLO_TIME);
+}
+
+static void display_timeout(void * p_context) {
+    task_events_set(display_task_id, EPAPER_TIME);
+}
+
+static void display_delay_timeout(void * p_context) {
+    task_events_set(display_task_id, DELAY_TIME);
+}
+
+static void clock_handler(nrfx_clock_evt_type_t event) 
+{
+
+}
+
+void idle_task(void * p_context)
+{
+    while (true)
+    {
+        if (NRF_LOG_PROCESS() == false)
+        {
+            nrf_pwr_mgmt_run();
+        }
+        task_yield();
+    }
+}
+
+void hello_task(void * p_context)
+{
+    uint32_t ctr = 0;
+    while(true) {
+        NRF_LOG_INFO("Counter: %6d", ++ctr);
+        task_events_wait(HELLO_TIME);
+    }
+}
+
+void display_task(void * p_context)
+{
+    while(true) {
+        NRF_LOG_INFO("epaper wakeup");
+        epaper_wakeup();
+
+        NRF_LOG_INFO("epaper clear");
+        epaper_clear();
+
+        NRF_LOG_INFO("epaper image");
+        epaper_display(gImage_4in2);
+
+        NRF_LOG_INFO("epaper sleep");
+        epaper_sleep();
+
+        task_events_wait(EPAPER_TIME);
+    }
+}
+
 /**
  * @brief Function for application main entry.
  */
@@ -21,34 +106,31 @@ int main(void)
     APP_ERROR_CHECK(
         nrf_pwr_mgmt_init()
     );
-    NRF_LOG_INFO("epaper sample started");
-    while(NRF_LOG_PROCESS());
+    APP_ERROR_CHECK(
+        nrfx_clock_init(clock_handler)
+    );
+    nrfx_clock_lfclk_start();
+    nrfx_clock_enable();
+    APP_ERROR_CHECK(
+        app_timer_init()
+    );
+
     epaper_init();
-    while(NRF_LOG_PROCESS());
-    NRF_LOG_INFO("epaper wakeup");
-    while(NRF_LOG_PROCESS());
-    epaper_wakeup();
-    while(NRF_LOG_PROCESS());
-    NRF_LOG_INFO("epaper clear");
-    while(NRF_LOG_PROCESS());
-    epaper_clear();
-    while(NRF_LOG_PROCESS());
-    NRF_LOG_INFO("epaper display");
-    while(NRF_LOG_PROCESS());
-    epaper_display(gImage_4in2);
-    NRF_LOG_INFO("epaper sleep");
-    while(NRF_LOG_PROCESS());
-    epaper_sleep();
-    
-    while (true)
-    {
-        if (NRF_LOG_PROCESS() == false)
-        {
-            nrf_pwr_mgmt_run();
-        }
-    }
+
+    app_timer_create(&hello_timer, APP_TIMER_MODE_REPEATED, hello_timeout);
+    app_timer_create(&display_timer, APP_TIMER_MODE_REPEATED, display_timeout);
+    app_timer_create(&display_delay_timer, APP_TIMER_MODE_SINGLE_SHOT, display_delay_timeout);
+
+    hello_task_id = task_create(hello_task, "hello", NULL);
+    display_task_id = task_create(display_task, "display", NULL);
+
+    app_timer_start(hello_timer, APP_TIMER_TICKS(3000), NULL);
+    app_timer_start(display_timer, APP_TIMER_TICKS(30000), NULL);
+
+    task_manager_start(idle_task, NULL);
 }
 
+#if 1
 static uint8_t gImage_4in2[]  = { 
 /* 0X00,0X01,0X90,0X01,0X2C,0X01, */
 0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
@@ -992,4 +1074,4 @@ static uint8_t gImage_4in2[]  = {
 };
 
 /* EOF */
- 
+#endif 

@@ -15,13 +15,19 @@ SRC_FILES += $(SDK_ROOT)/components/libraries/log/src/nrf_log_backend_uart.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/log/src/nrf_log_default_backends.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/log/src/nrf_log_frontend.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/log/src/nrf_log_str_formatter.c
+SRC_FILES += $(SDK_ROOT)/components/libraries/mpu/nrf_mpu.c
 #SRC_FILES += $(SDK_ROOT)/components/libraries/button/app_button.c
+SRC_FILES += $(SDK_ROOT)/components/libraries/sortlist/nrf_sortlist.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/util/app_error.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/util/app_error_handler_gcc.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/util/app_error_weak.c
 #SRC_FILES += $(SDK_ROOT)/components/libraries/scheduler/app_scheduler.c
+SRC_FILES += $(SDK_ROOT)/components/libraries/experimental_task_manager/task_manager_core_armgcc.S
+SRC_FILES += $(SDK_ROOT)/components/libraries/experimental_task_manager/task_manager.c
 #SRC_FILES += $(SDK_ROOT)/components/libraries/sdcard/app_sdcard.c
-#SRC_FILES += $(SDK_ROOT)/components/libraries/timer/experimental/app_timer2.c
+SRC_FILES += $(SDK_ROOT)/components/libraries/timer/experimental/app_timer2.c
+#SRC_FILES += $(SDK_ROOT)/components/libraries/timer/app_timer.c
+SRC_FILES += $(SDK_ROOT)/components/libraries/timer/experimental/drv_rtc.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/util/app_util_platform.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/hardfault/hardfault_implementation.c
 SRC_FILES += $(SDK_ROOT)/components/libraries/util/nrf_assert.c
@@ -40,7 +46,7 @@ SRC_FILES += $(SDK_ROOT)/modules/nrfx/mdk/system_nrf52.c
 #SRC_FILES += $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_clock.c
 #SRC_FILES += $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_spi.c
 SRC_FILES += $(SDK_ROOT)/integration/nrfx/legacy/nrf_drv_uart.c
-#SRC_FILES += $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_clock.c
+SRC_FILES += $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_clock.c
 SRC_FILES += $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_gpiote.c
 #SRC_FILES += $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_ppi.c
 #SRC_FILES += $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_timer.c
@@ -77,6 +83,7 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/usbd/class/hid/generic \
   $(SDK_ROOT)/components/libraries/usbd/class/msc \
   $(SDK_ROOT)/components/libraries/usbd/class/hid \
+  $(SDK_ROOT)/components/libraries/timer/experimental \
   $(SDK_ROOT)/modules/nrfx/hal \
   $(SDK_ROOT)/components/nfc/ndef/conn_hand_parser/le_oob_rec_parser \
   $(SDK_ROOT)/components/libraries/log \

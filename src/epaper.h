@@ -3,6 +3,15 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "task_manager.h"
+
+#define EPAPER_TIME 0x00000001
+#define EPAPER_IDLE 0x00000002
+#define DELAY_TIME  0x80000000
+#define SPIM_DONE   0x40000000
+
+extern void task_delay_ms(int ms);
+task_id_t display_task_id;
 
 // Display resolution
 #define EPD_WIDTH       400
